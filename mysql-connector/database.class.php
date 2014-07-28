@@ -161,8 +161,8 @@
 				}
 				$qVal = implode(", ", $val);
 				$query = "UPDATE {$table} SET {$qVal} WHERE {$conditional}";
-				$res = mysqli_query( $query );
-				if( $res === false ) {
+				$result = mysqli_query( $query );
+				if( $result === false ) {
 					return false;
 				} else {
 					return true;
@@ -185,8 +185,8 @@
 				$conditional = mysqli_real_escape_string($conditional);
 
 				$query = "DELETE FROM {$table} WHERE {$conditional}";
-				$res = mysqli_query($query);
-				if( $res === false ) {
+				$result = mysqli_query($query);
+				if( $result === false ) {
 					return false;
 				} else {
 					return true;
@@ -229,10 +229,10 @@
 						return false;
 					} else {
 						$arrElements = array();
-						while($el = mysqli_fetch_array($res, MYSQLI_ASSOC)) {
+						while($el = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
 							array_push($arrElements, $el);
 						}
-						mysql_free_result($res);
+						mysqli_free_result($result);
 						return $arrElements;
 					}
 				}
