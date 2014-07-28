@@ -1,4 +1,5 @@
-php-utils
+MySQL Connector for PHP 5.3+
 =========
+This MySQL connector is made using the mysqli library, due the deprecation of the default mysql method.
 
-Here you'll have many utilities made with love by me :). You may use it for your commercial or non-commercial developments under CC-BY-SA 4.0 License. If you find bugs, please contact me.
+Released under Creative Commons CC-BY-SA 4.0.
