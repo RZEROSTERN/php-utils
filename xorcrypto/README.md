@@ -1,4 +1,7 @@
-php-utils
+XOR Cryptography for PHP
 =========
+This utility is intended for making cryptography with XOR logic operation.
+It's intended for give a little bit of security inside a system in many business processes like logins, static keys, etc.
+If you find bugs, please tell me.
 
-Here you'll have many utilities made with love by me :). You may use it for your commercial or non-commercial developments under CC-BY-SA 4.0 License. If you find bugs, please contact me.
+Peace !!!
