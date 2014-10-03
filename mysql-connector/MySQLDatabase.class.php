@@ -4,13 +4,13 @@
 	 *	MySQL Database Class
 	 *	Class upgraded for use with 5.3+ PHP Servers.
 	 *
-	 *	@version 1.0
+	 *	@version 2.0
 	 *	@author RZEROSTERN
 	 *	@license Beerware Rev 43 for @yagarasu, @t1niebl4zz, @GatussoIII, @juliettemaxwell, @nubieshita and @TijoMONSTER.
 	 *	@license Creative Commons CC-BY-SA 4.0 for the rest of the world.
 	 *
 	 * 	----------------------------------------------------------------------------
-	 * 						"THE BEER-WARE LICENSE" (Revision 43):
+	 * 						"THE BEER-WARE LICENSE" (Revision 42):
 	 *
 	 * 	RZEROSTERN wrote this file. As long as you retain this notice you
 	 * 	can do whatever you want with this stuff. If we meet some day, and you think
@@ -30,7 +30,7 @@
 		private $user;
 		private $pass;
 		private $database;
-		private $linkdb;
+		private $instance;
 		private $is_connected;
 
 		/**
@@ -54,10 +54,10 @@
 		 * 	@return TRUE for success, FALSE for failure.
 		 */
 		public function connect(){
-			$this->linkdb = @mysqli_connect($this->host, $this->user, $this->pass, $this->database);
-
-			if($this->linkdb == false){
-				echo "Error al conectar a MySQL: ".mysqli_connect_errno(). " - ".mysqli_connect_error();
+			$this->instance = new mysqli($this->host, $this->user, $this->pass, $this->db);
+			
+			if($this->instance->connect_errno > 0){
+				echo "Error al conectar a MySQL: ".$this->instance->errno(). " - ".$this->instance->error();
 				return false;
 			} else {
 				$this->is_connected = true;
@@ -74,7 +74,7 @@
 			if(!$this->is_connected){
 				return false;
 			} else {
-				mysqli_close($this->linkdb);
+				$this->instance->close();
 				$this->is_connected = false;
 				return true;
 			}
@@ -92,15 +92,15 @@
 			if(!$this->is_connected){
 				return false;
 			} else {
-				$unique = mysqli_real_escape_string($unique);
-				$table = mysqli_real_escape_string($table);
-				$conditional = mysqli_real_escape_string($conditional);
+				$unique = $this->instance->real_escape_string($unique);
+				$table = $this->instance->real_escape_string($table);
+				
 				$cnt = ($unique == "") ? 'count(*)' : 'count(distinct ".$unique.")';
 				$whe = ($conditional == "") ? '1=1' : $conditional;
 
 				$query = "SELECT ".$cnt." FROM ".$table." WHERE ".$whe.";";
-				$result = mysqli_query($this->linkdb, $query);
-				$r = mysqli_fetch_array($result);
+				$result = $this->instance->query($query);
+				$r = $result->fetch_array();
 				return intval($r[0]);
 			}
 		}
@@ -116,9 +116,9 @@
 			if(!$this->is_connected){
 				return false;
 			} else {
-				$table = mysqli_real_escape_string($table);
+				$table = $this->instance->real_escape_string($table);
 				$keys = array_keys($data);
-				$keys = array_map("mysqli_real_escape_string", $keys);
+				$keys = array_map(array($this->instance, "real_escape_string"), $keys);
 				$qkeys = implode(",", $keys);
 
 				foreach($data as $k=>$v){
@@ -129,12 +129,13 @@
 
 				$qval = implode(",", $data);
 				$query = "INSERT INTO {$table} ({$qkeys}) VALUES ({$qval});";
-				$result = mysqli_query($query);
-
+				
+				$result = $this->instance->query($query);
+				
 				if($result === false){
 					return false;
 				} else {
-					$lastid = mysqli_insert_id($this->linkdb);
+					$lastid = $this->instance->insert_id;
 					return $lastid;
 				}
 			}
@@ -152,17 +153,22 @@
 			if(!$this->is_connected){
 				return false;
 			} else {
-				$table = mysqli_real_escape_string($table);
-				$conditional = mysqli_real_escape_string($conditional);
+				$table = $this->instance->real_escape_string($table);
 
 				$val = array();
 				foreach($data as $k=>$v) {
-					array_push($val, $k."='".$v."'");
+					if(stripos($v, "()") !== false){
+						array_push($val, $k." = ".$v);
+					} else {
+						array_push($val, $k." = '".$v."'");
+					}
 				}
 				$qVal = implode(", ", $val);
 				$query = "UPDATE {$table} SET {$qVal} WHERE {$conditional}";
-				$result = mysqli_query( $query );
-				if( $result === false ) {
+				
+				$res = $this->instance->query( $query );
+				
+				if( $res === false ) {
 					return false;
 				} else {
 					return true;
@@ -181,12 +187,11 @@
 			if(!$this->is_connected){
 				return false;
 			} else {
-				$table = mysqli_real_escape_string($table);
-				$conditional = mysqli_real_escape_string($conditional);
+				$table = $this->instance->real_escape_string($table);
 
 				$query = "DELETE FROM {$table} WHERE {$conditional}";
-				$result = mysqli_query($query);
-				if( $result === false ) {
+				$res = $this->instance->query($query);
+				if( $res === false ) {
 					return false;
 				} else {
 					return true;
@@ -204,11 +209,18 @@
 			if(!$this->is_connected){
 				return false;
 			} else {
-				$result = mysqli_query($this->linkdb, $query);
-				if($result === false){
-					return false;
+				$query = $this->instance->real_escape_string($query);
+				$result = $this->instance->query($query);
+				if($result !== false){
+					$resultarray = $result->fetch_assoc();
 				} else {
-					return mysqli_fetch_array($result, MYSQLI_ASSOC);
+					return false;
+				}
+
+				if(is_array($resultarray)){
+					return $resultarray;
+				} else {
+					return false;
 				}
 			}
 		}
@@ -223,16 +235,18 @@
 			if(!$this->is_connected){
 				return false;
 			} else {
-				if(!$this->isConn) { return false; } else {
-					$result = mysqli_query($this->linkdb, $query);
+				if(!$this->is_connected) { return false; } else {
+					//$query = $this->instance->real_escape_string($query);
+					$result = $this->instance->query($query);
+					
 					if($result === false) {
 						return false;
 					} else {
 						$arrElements = array();
-						while($el = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
+						while($el = $result->fetch_array(MYSQLI_ASSOC)) {
 							array_push($arrElements, $el);
 						}
-						mysqli_free_result($result);
+						$result->free_result();
 						return $arrElements;
 					}
 				}
@@ -249,7 +263,7 @@
 			if(!$this->linkdb){
 				return false;
 			} else {
-				return mysqli_real_escape_string($string);
+				return $this->instance->real_escape_string($string);
 			}
 		}
 
@@ -259,7 +273,7 @@
 		 *	@return String with error details.
 		 */
 		public function get_last_error(){
-			return "Error al realizar consulta en MySQL: ".mysqli_connect_errno(). " - ".mysqli_connect_error();
+			return "Error al realizar consulta en MySQL: ".$this->instance->connect_errno(). " - ".$this->instance->connect_error();
 		}
 
 		/**
