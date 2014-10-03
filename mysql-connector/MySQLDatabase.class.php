@@ -6,7 +6,7 @@
 	 *
 	 *	@version 2.0
 	 *	@author RZEROSTERN
-	 *	@license Beerware Rev 43 for @yagarasu, @t1niebl4zz, @GatussoIII, @juliettemaxwell, @nubieshita and @TijoMONSTER.
+	 *	@license Beerware Rev 43 for @yagarasu, @t1niebl4zz, @GatussoIII, @juliettemaxwell, @nubieshita, @viryxtwin and @TijoMONSTER.
 	 *	@license Creative Commons CC-BY-SA 4.0 for the rest of the world.
 	 *
 	 * 	----------------------------------------------------------------------------
