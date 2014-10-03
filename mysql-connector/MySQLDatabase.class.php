@@ -211,7 +211,6 @@
 			if(!$this->is_connected){
 				return false;
 			} else {
-				$query = $this->instance->real_escape_string($query);
 				$result = $this->instance->query($query);
 				if($result !== false){
 					$resultarray = $result->fetch_assoc();
@@ -238,7 +237,6 @@
 				return false;
 			} else {
 				if(!$this->is_connected) { return false; } else {
-					$query = $this->instance->real_escape_string($query);
 					$result = $this->instance->query($query);
 					
 					if($result === false) {
