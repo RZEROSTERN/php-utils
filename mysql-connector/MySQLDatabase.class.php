@@ -6,7 +6,7 @@
 	 *
 	 *	@version 2.0
 	 *	@author RZEROSTERN
-	 *	@license Beerware Rev 43 for @yagarasu, @t1niebl4zz, @GatussoIII, @juliettemaxwell, @nubieshita, @viryxtwin and @TijoMONSTER.
+	 *	@license Beerware Rev 43 for @yagarasu, @t1niebl4zz, @GatussoIII, @juliettemaxwell, @nubieshita and @TijoMONSTER.
 	 *	@license Creative Commons CC-BY-SA 4.0 for the rest of the world.
 	 *
 	 * 	----------------------------------------------------------------------------
@@ -55,6 +55,8 @@
 		 */
 		public function connect(){
 			$this->instance = new mysqli($this->host, $this->user, $this->pass, $this->db);
+			
+			var_dump($this->instance->connect_errno);
 			
 			if($this->instance->connect_errno > 0){
 				echo "Error al conectar a MySQL: ".$this->instance->errno(). " - ".$this->instance->error();
@@ -236,7 +238,7 @@
 				return false;
 			} else {
 				if(!$this->is_connected) { return false; } else {
-					//$query = $this->instance->real_escape_string($query);
+					$query = $this->instance->real_escape_string($query);
 					$result = $this->instance->query($query);
 					
 					if($result === false) {
@@ -260,10 +262,11 @@
 		 *	@return Sanitized string for success, FALSE for failure.
 		 */
 		public function escape($string){
-			if(!$this->linkdb){
+			if(!$this->is_connected){
 				return false;
 			} else {
-				return $this->instance->real_escape_string($string);
+				$escapedstring = $this->instance->real_escape_string($string);
+				return $escapedstring;
 			}
 		}
 
