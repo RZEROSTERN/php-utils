@@ -292,8 +292,10 @@
 		 * 	@param	$stat Set the status for autocommit. TRUE for automatic, FALSE for manual. 
 		 * 	@return result of the transaction
 		 */
-		public function autocommit($stat){
-			return $this->instance->autocommit($stat);
+		public function autocommit(){
+			//$res = $this->instance->autocommit($stat);
+			$res = $this->instance->query("START TRANSACTION");
+			return $res;
 		}
 		
 		/**
@@ -302,7 +304,8 @@
 		 * @return TRUE for success commit, FALSE for error.
 		 */
 		public function commit(){
-			$this->instance->rollback();
+			$res = $this->instance->query("COMMIT");
+			return $res;
 		}
 		
 		/**
@@ -311,7 +314,8 @@
 		 * @return TRUE for success rollback, FALSE for error.
 		 */
 		public function rollback(){
-			$this->instance->rollback();
+			$res = $this->instance->query("ROLLBACK");
+			return $res;
 		}
 	}
 ?>
