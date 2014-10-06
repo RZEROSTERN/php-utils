@@ -282,7 +282,9 @@
 		 *	Determines if the instance is connected
 		 *	@return Result of connected instance (TRUE or FALSE).
 		 */
-		public function is_connected(){	return $this->is_connected; }
+		public function is_connected(){	
+			return $this->is_connected; 
+		}
 		
 		/**
 		 * 	autocommit
