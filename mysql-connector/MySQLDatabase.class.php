@@ -282,6 +282,34 @@
 		 *	Determines if the instance is connected
 		 *	@return Result of connected instance (TRUE or FALSE).
 		 */
-		public function is_connected(){	return $this->is_connected;	}
+		public function is_connected(){	return $this->is_connected; }
+		
+		/**
+		 * 	autocommit
+		 * 	Changes the mode for auto-commit in MySQL queries.
+		 * 	@param	$stat Set the status for autocommit. TRUE for automatic, FALSE for manual. 
+		 * 	@return result of the transaction
+		 */
+		public function autocommit($stat){
+			return $this->instance->autocommit($stat);
+		}
+		
+		/**
+		 * commit
+		 * Commits the changes made before in database.
+		 * @return TRUE for success commit, FALSE for error.
+		 */
+		public function commit(){
+			$this->instance->rollback();
+		}
+		
+		/**
+		 * commit
+		 * Rollbacks the changes made before in database.
+		 * @return TRUE for success rollback, FALSE for error.
+		 */
+		public function rollback(){
+			$this->instance->rollback();
+		}
 	}
 ?>
