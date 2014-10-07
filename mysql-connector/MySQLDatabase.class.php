@@ -236,19 +236,17 @@
 			if(!$this->is_connected){
 				return false;
 			} else {
-				if(!$this->is_connected) { return false; } else {
-					$result = $this->instance->query($query);
-					
-					if($result === false) {
-						return false;
-					} else {
-						$arrElements = array();
-						while($el = $result->fetch_array(MYSQLI_ASSOC)) {
-							array_push($arrElements, $el);
-						}
-						$result->free_result();
-						return $arrElements;
+				$result = $this->instance->query($query);
+				
+				if($result === false) {
+					return false;
+				} else {
+					$arrElements = array();
+					while($el = $result->fetch_array(MYSQLI_ASSOC)) {
+						array_push($arrElements, $el);
 					}
+					$result->free_result();
+					return $arrElements;
 				}
 			}
 		}
