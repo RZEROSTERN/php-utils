@@ -272,7 +272,7 @@
 		 *	@return String with error details.
 		 */
 		public function get_last_error(){
-			return "Error al realizar consulta en MySQL: ".$this->instance->connect_errno(). " - ".$this->instance->connect_error();
+			return "Error al realizar consulta en MySQL: ".$this->instance->connect_errno. " - ".$this->instance->connect_error;
 		}
 
 		/**
