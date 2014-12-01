@@ -4,7 +4,7 @@
 	 *	MySQL Database Class
 	 *	Class upgraded for use with 5.3+ PHP Servers.
 	 *
-	 *	@version 2.0
+	 *	@version 2.1
 	 *	@author RZEROSTERN
 	 *	@license Beerware Rev 43 for @yagarasu, @t1niebl4zz, @GatussoIII, @juliettemaxwell, @nubieshita and @TijoMONSTER.
 	 *	@license Creative Commons CC-BY-SA 4.0 for the rest of the world.
@@ -314,6 +314,46 @@
 		public function rollback(){
 			$res = $this->instance->query("ROLLBACK");
 			return $res;
+		}
+		
+		/**
+		 *	execute_stored_procedure
+		 *	Executes a stored procedure. 
+		 * 	WARNING: MySQL DOES NOT ALLOW FUNCTION CALLS IN STORED PROCEDURES. If they support it later, it'll be added.
+		 *	@param procedure Name of the stored procedure
+		 *	@param params Associative array for sending parameters to the stored procedure.
+		 *	@return resultset from StoredProc for success, false for failure.
+		 */
+		public function execute_stored_procedure($p_procedure, $params = array()){
+			if(!$this->is_connected){
+				return false;
+			} else {
+				$this->instance->autocommit(true);
+
+				$procedure = $this->instance->real_escape_string($p_procedure);
+				$keyparams = array();
+
+				foreach($params as $k=>$v) {
+					array_push($keyparams, "@".$k);
+					$this->instance->query("SET @{$k} = '{$v}'");
+				}
+
+				$stringparams = implode(",", $keyparams);
+
+				$result = $this->instance->query('CALL '.$procedure.'('.$stringparams.');');
+				$this->instance->commit();
+
+				if($result === false){
+					return false;
+				} else {
+					$arrElements = array();
+					while($el = $result->fetch_array(MYSQLI_ASSOC)) {
+						array_push($arrElements, $el);
+					}
+					$result->free_result();
+					return $arrElements;
+				}
+			}
 		}
 	}
 ?>
