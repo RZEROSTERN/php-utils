@@ -56,8 +56,6 @@
 		public function connect(){
 			$this->instance = new mysqli($this->host, $this->user, $this->pass, $this->db);
 			
-			var_dump($this->instance->connect_errno);
-			
 			if($this->instance->connect_errno > 0){
 				echo "Error al conectar a MySQL: ".$this->instance->errno(). " - ".$this->instance->error();
 				return false;
