@@ -3,7 +3,7 @@
 	 * 	MySQL Database Class
 	 *	Class upgraded for use with 5.3+ PHP Servers.
 	 *
-	 *	@version 2.2
+	 *	@version 2.3
 	 *	@author RZEROSTERN
 	 *	@license Beerware Rev 43 for @yagarasu, @t1niebl4zz, @GatussoIII, @juliettemaxwell, @nubieshita and @TijoMONSTER.
 	 *	@license Creative Commons CC-BY-SA 4.0 for the rest of the world.
@@ -114,7 +114,7 @@
 				$keys = array_map(array($this->instance, "real_escape_string"), $keys);
 				$qkeys = implode(",", $keys);
 				foreach($data as $k=>$v){
-					if(!is_null($v) || stripos($v, "()") === false){
+					if(!is_null($v) && !stripos($v, "()")){
 						$data[$k] = "'".$v."'";
 					} else {
                         if(is_null($v)){
