@@ -58,9 +58,9 @@ class CSVExporter {
 
         $output = fopen("php://output", "w");
 
-        // Encabezados
+        // Headers
         fputcsv($output, $this->columns);
-        // Datos
+        // Data
         foreach($this->rows as $row){
             fputcsv($output, $row);
         }
